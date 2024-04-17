@@ -2,11 +2,11 @@ from rest_framework import serializers
 from .models import Account, Profile
 
 class AccountSerializer(serializers.ModelSerializer):
-    password_again = serializers.CharField(style={"input_type": "password"}, write_only=True)
+    password_again = serializers.CharField(style={"input_type": "password"})
     class Meta:
         model = Account
         fields = ['email', 'first_name', 'last_name', 'password', 'password_again']
-        extra_kwargs = {'password':{'write_only':True}}
+       
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:

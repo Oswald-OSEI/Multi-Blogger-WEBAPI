@@ -14,15 +14,22 @@ def UserRegistration(request):
         #check if the data is valid
         if account.is_valid(raise_exception = True):
             #get passwords from account(which is the inputted dat from the serializer)
-            password1 = account['password']
-            password2 = account['password_again']
+            cd = account.data
+            password1 = cd.get('password')
+            password2 = cd.get('password_again')
             #compare both retrieved passwords
             if password1==password2:
                 #if the passwords are the same, set password
-                account.set_password(password1)
-                account.save()
-                Profile.objects.create(account_holder = request.user)
-                return Response(f"welcome {account['first_name']}")
+                registered = Account.objects.create(
+                    email = cd.get('email'), 
+                    first_name = cd.get('first_name'), 
+                    last_name = cd.get('last_name'), 
+                )
+                registered.set_password(password1)
+                registered.save()
+                your_profile = Profile.objects.create(account_holder = registered)
+                your_profile.save()
+                return Response('welcome')
             #if passwords don't match, notify the user that passwords don't match
             else:
                 return Response('passwords do not match')
@@ -33,7 +40,7 @@ def UserLogin(request):
         logindata = LoginSerializer(data = request.data)
         if logindata.is_valid(raise_exception=True):
             cd = logindata.data
-            authorise = authenticate(request, username = cd['email'], password = cd["password"])
+            authorise = authenticate(request, username = cd.get('email'), password = cd.get("password"))
             if authorise is not None:
                 if authorise.is_active:
                     login(request, authorise)

@@ -23,7 +23,7 @@ class Blog(models.Model):
 
 class BlogReview(models.Model):
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
-    reviewer = models.ForeignKey(Account, on_delete=models.CASCADE)
+    reviewer = models.ForeignKey(Account, on_delete=models.CASCADE, null = True)
     content = models.TextField()
     rating = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
