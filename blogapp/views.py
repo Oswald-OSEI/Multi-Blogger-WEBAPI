@@ -12,7 +12,6 @@ def readBlog(request, blog_slug):
     try:
         blog = BlogSerializer(Blog.objects.get(slug=blog_slug)).data
         return Response(blog)
-    
     except ObjectDoesNotExist:
         return Response('blog does not exist')
 #blog allows reader to write review on the blog
@@ -20,11 +19,12 @@ def readBlog(request, blog_slug):
 def writeReview(request, blog_slug):
     if request.method == 'POST':
         review = BlogReviewSerializer(data = request.data)
-        review['reviewer'] = request.user
         if Blog.handle.blogger == request.user:
             return Response('sorry, your review cannot be registered')
-        else:   
+        else: 
             if review.is_valid(raise_expection = True):
+                cd = review.data
+                cd['reviewer'] = request.user
                 review.save()
             else:
                 return Response('rewrite review')
