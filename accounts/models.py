@@ -19,6 +19,10 @@ def user_profile_pics_directory(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
     return 'user_{0}/profilepics/{1}'.format(instance.account_holder.email, filename)
 
+class loginmodel(models.Model):
+    email = models.EmailField()
+    password = models.CharField(max_length=150)
+
 class Profile(models.Model):
     account_holder = models.OneToOneField(Account, on_delete = models.CASCADE)
     profile_picture = models.ImageField(upload_to= user_profile_pics_directory, null = True)

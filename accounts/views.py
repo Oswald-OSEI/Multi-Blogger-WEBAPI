@@ -5,6 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.decorators import api_view
 from .models import Account, Profile
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 @api_view(['POST'])
 def UserRegistration(request):
@@ -34,7 +35,7 @@ def UserRegistration(request):
             else:
                 return Response('passwords do not match')
             
-@api_view(["POST", "GET"])
+@api_view(["POST"])
 def UserLogin(request):
     if request.method == "POST":
         logindata = LoginSerializer(data = request.data)
@@ -54,27 +55,32 @@ def UserLogin(request):
             
         
 @api_view(['GET'])
-#@permission_classses([IsAuthenticated])
+@login_required
 def viewProfile(request):
     active_user = request.user
     try:
-        current_profile = Profile.Objects.get(account_holder = active_user)
+        current_profile = Profile.objects.get(account_holder = active_user)
     except ObjectDoesNotExist:
-        current_profile = Profile.Objects.create(account_holder = active_user)
+        current_profile = Profile.objects.create(account_holder = active_user)
         current_profile.save()
     your_profile = ProfileSerializer(current_profile).data
     return Response(your_profile)
 
-@api_view(['POST'])
-#@permission_classses([IsAuthenticated])
+@api_view(['GET', 'POST'])
+@login_required
 def editProfile(request):
-    active_user = request.user
-    your_profile = Profile.Objects.get(account_holder=active_user)
+    your_profile = Profile.objects.get(account_holder=request.user)
     updated_profile = ProfileSerializer(your_profile, data = request.data)
     if updated_profile.is_valid(raise_exception = True):
-        updated_profile.save()
+        updated_pic = request.FILES.get('profile_picture')
+        if updated_pic is not None:
+            updated_profile.save(profile_picture=updated_pic)
+        else:
+            updated_profile.save()
+        return Response(updated_profile.data)
     else:
         return Response("invalid update")
+    
     
 
     

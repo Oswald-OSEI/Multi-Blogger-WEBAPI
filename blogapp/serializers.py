@@ -9,5 +9,5 @@ class BlogReviewSerializer:
 class BlogSerializer(serializers.ModelSerializer):
     class Meta:
         model = Blog
-        fields = ['Title', 'Content', 'Images']
+        fields = ['Title', 'Content', 'Pictures']
         

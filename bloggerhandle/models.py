@@ -12,8 +12,3 @@ class BlogHandle(models.Model):
     slug = models.SlugField( unique = True )
     blogger = models.OneToOneField(Account, on_delete = models.CASCADE, blank=True)
     banner = models.ImageField(upload_to=user_bloghandle_banner)
-
-    def generate_slug(self, args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.handle_name)
-            super().save(*args, **kwargs)

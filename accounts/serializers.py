@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Account, Profile
+from .models import Account, Profile, loginmodel
 
 class AccountSerializer(serializers.ModelSerializer):
     password_again = serializers.CharField(style={"input_type": "password"})
@@ -15,6 +15,6 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 class LoginSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Account
+        model = loginmodel
         fields = ["email", "password"]
         write_only_fields = ["password"]
