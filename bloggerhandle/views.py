@@ -13,8 +13,9 @@ from django.core.exceptions import ObjectDoesNotExist
 def create_handle(request):
     if request.method== 'POST':
         handle = BlogHandleSerializer(data = request.data)
-        handle['blogger'] = request.user
         if handle.is_valid(raise_exception = True):
+            cd = handle.data
+            cd['handler'] = request.user
             handle.blogger.isBlogger=True
             handle.save()
 
@@ -54,8 +55,9 @@ def addblog(request, handle_slug):
         bloghandle = BlogHandle.objects.all().filter(slug=handle_slug, blogger = request.user)
         if request.method == 'POST':
             blog = BlogSerializer(data = request.data)
-            blog['blog_handle'] = bloghandle
             if blog.is_valid(raise_exception = True):
+                cd = blog.data
+                cd['blog_handle'] = bloghandle
                 blog.save()
     except ObjectDoesNotExist:
         return Response("You are not authorised to add blogs on this blog")
