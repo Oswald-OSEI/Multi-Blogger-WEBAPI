@@ -11,7 +11,14 @@ from django.core.exceptions import ObjectDoesNotExist
 def readBlog(request, blog_slug):
     try:
         blog = BlogSerializer(Blog.objects.get(slug=blog_slug)).data
-        return Response(blog)
+        reviews = BlogReview.objects.all().filter(blog=blog)
+        review_data = BlogReviewSerializer(reviews, many=True).data
+        context={
+            'blog':blog,
+            'review_data':review_data
+        }
+        return Response(context)
+    
     except ObjectDoesNotExist:
         return Response('blog does not exist')
 #blog allows reader to write review on the blog
@@ -24,8 +31,12 @@ def writeReview(request, blog_slug):
         else: 
             if review.is_valid(raise_expection = True):
                 cd = review.data
-                cd['reviewer'] = request.user
-                review.save()
+                written_review = BlogReview.objects.create(
+                    content = cd.get('content'),
+                    rating = cd.get("rating"), 
+                    reviewer = request.user
+                )
+                written_review.save()
             else:
                 return Response('rewrite review')
 

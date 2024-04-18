@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view
 from .serializers import BlogHandleSerializer
 from .models import BlogHandle
 from accounts.models import Account
-from blogapp.models import Blog
+from blogapp.models import Blog, BlogReview
 from blogapp.serializers import BlogSerializer
 from django.utils.text import slugify
 from django.core.exceptions import ObjectDoesNotExist
@@ -68,7 +68,7 @@ def myblogs(request, handle_slug):
     except ObjectDoesNotExist:
         return Response('You have no blogs')
 
-#creates a new blog in a blog handle
+#creates a new blog in a blog handle and its respective review
 @api_view(['POST'])
 def addblog(request, handle_slug):
     try:
@@ -85,6 +85,9 @@ def addblog(request, handle_slug):
                     blog_slug = slugify(cd.get('Title'))  
                 )
                 creating_blog.save()
+                blog_review = BlogReview.objects.create(
+                    blog = creating_blog
+                )
                 return Response('Blog Uploaded')
     except ObjectDoesNotExist:
         return Response("You are not authorised to add blogs on this blog")
