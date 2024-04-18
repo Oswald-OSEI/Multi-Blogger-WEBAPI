@@ -1,4 +1,5 @@
 db.sqlite3
+.gitignore
 user_oswaldosei9@gmail.com
 accounts\_pycache_
 accounts\migrations\_pycache_
