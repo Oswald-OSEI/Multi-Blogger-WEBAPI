@@ -20,10 +20,14 @@ def create_handle(request):
             create_handler = BlogHandle.objects.create(
                 blogger=request.user, 
                 handle_name = cd.get('handle_name'), 
-                banner = request.FILES.get('banner'),
                 slug = slugify(cd.get('handle_name'))
             )
-            create_handler.save()
+            handle_banner = request.FILES.get('banner') 
+            if handle_banner is not None:
+                create_handler.banner = handle_banner
+                create_handler.save()
+            else:
+                create_handler.save()
             RegBlogger = Account.objects.get(id = create_handler.blogger.id)
             RegBlogger.isBlogger=True
             RegBlogger.save()
@@ -44,7 +48,8 @@ def updateHandle(request, handle_name):
         if updated_handle.is_valid(raise_exception = True):
             banner_update = request.FILES.get('banner')
             if banner_update is not None:
-                updated_handle.save(banner=banner_update)
+                updated_handle.banner = banner_update
+                updated_handle.save()
             else:
                 updated_handle.save()
             return Response(updated_handle.data)
@@ -93,7 +98,8 @@ def updateBlog(request, handle_name,blog_slug):
         if updated_blog.is_valid(raise_exception = True):
             if request.FILES.get('Pictures') is not None:
                 Pics = request.FILES.get('Pictures')
-                updated_blog.save(Pictures=Pics)
+                updated_blog.Pictures = Pics
+                updated_blog.save()
             else:
                 updated_blog.save()
             return Response(updated_blog.data)

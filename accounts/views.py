@@ -74,7 +74,8 @@ def editProfile(request):
     if updated_profile.is_valid(raise_exception = True):
         updated_pic = request.FILES.get('profile_picture')
         if updated_pic is not None:
-            updated_profile.save(profile_picture=updated_pic)
+            updated_profile.profile_picture = updated_pic
+            updated_profile.save()
         else:
             updated_profile.save()
         return Response(updated_profile.data)
